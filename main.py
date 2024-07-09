@@ -1,7 +1,7 @@
 
 ### 2. `main.py`
 
-```python
+#```python
 """
 Assignment: Implement the most efficient algorithm to solve the given problem.
 
@@ -33,15 +33,40 @@ Example:
 """
 
 def longest_path(graph: list) -> int:
-    # Your implementation goes here
-    pass
+    topo_order = topological_sort(graph)
+    return calculate_longest_path(graph, topo_order)
 
 # Helper function to perform topological sort
 def topological_sort(graph):
-    # Your implementation goes here
-    pass
+    n = len(graph)
+    visited = [False] * n
+    topo_order = []
+
+    def dfs(node):
+        visited[node] = True
+        for neighbor, _ in graph[node]:
+            if not visited[neighbor]:
+                dfs(neighbor)
+        topo_order.append(node)
+
+    for i in range(n):
+        if not visited[i]:
+            dfs(i)
+
+    return topo_order[::-1]
+
 
 # Function to calculate longest path using topological sort
 def calculate_longest_path(graph, topo_order):
-    # Your implementation goes here
-    pass
+    n = len(graph)
+    dist = [float('-inf')] * n
+    dist[topo_order[0]] = 0
+
+    for u in topo_order:
+        if dist[u] != float('-inf'):
+            for v, weight in graph[u]:
+                if dist[v] < dist[u] + weight:
+                    dist[v] = dist[u] + weight
+
+    return max(dist)
+
