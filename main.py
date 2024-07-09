@@ -32,41 +32,41 @@ Example:
 7
 """
 
-def longest_path(graph: list) -> int:
+
+def longest_path(graph):
+    def topological_sort(graph):
+        n = len(graph)
+        visited = [False] * n
+        topo_order = []
+
+        def dfs(node):
+            visited[node] = True
+            for neighbor, _ in graph[node]:
+                if not visited[neighbor]:
+                    dfs(neighbor)
+            topo_order.append(node)
+
+        for i in range(n):
+            if not visited[i]:
+                dfs(i)
+
+        return topo_order[::-1]
+
+    def calculate_longest_path(graph, topo_order):
+        n = len(graph)
+        dist = [float('-inf')] * n
+        dist[topo_order[0]] = 0
+
+        for u in topo_order:
+            if dist[u] != float('-inf'):  # Only if u is reachable
+                for v, weight in graph[u]:
+                    if dist[v] < dist[u] + weight:
+                        dist[v] = dist[u] + weight
+
+        return max(dist)
+
+    if not graph:
+        return 0
+
     topo_order = topological_sort(graph)
     return calculate_longest_path(graph, topo_order)
-
-# Helper function to perform topological sort
-def topological_sort(graph):
-    n = len(graph)
-    visited = [False] * n
-    topo_order = []
-
-    def dfs(node):
-        visited[node] = True
-        for neighbor, _ in graph[node]:
-            if not visited[neighbor]:
-                dfs(neighbor)
-        topo_order.append(node)
-
-    for i in range(n):
-        if not visited[i]:
-            dfs(i)
-
-    return topo_order[::-1]
-
-
-# Function to calculate longest path using topological sort
-def calculate_longest_path(graph, topo_order):
-    n = len(graph)
-    dist = [float('-inf')] * n
-    dist[topo_order[0]] = 0
-
-    for u in topo_order:
-        if dist[u] != float('-inf'):
-            for v, weight in graph[u]:
-                if dist[v] < dist[u] + weight:
-                    dist[v] = dist[u] + weight
-
-    return max(dist)
-
